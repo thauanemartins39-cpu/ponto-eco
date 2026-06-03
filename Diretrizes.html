@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Ponto Eco - Diretrizes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/Diretrizes.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body id="topo-inicio" class="topo-inicio">
+
+    <header class="banner-verde">
+        <div class="video-fundo-container">
+            <video id="video-fundo" class="video-fundo" autoplay muted loop playsinline>
+                <source src="video-background/4b44ad42d0eb5a45648f3e3dd128e6f8.mp4" type="video/mp4">
+                Seu navegador não suporta vídeo em segundo plano.
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+
+        <div class="header-conteudo">
+            <h1 class="titulo-principal">Diretrizes do Projeto</h1>
+            <div class="fundo-subtitulo">
+                <p class="subtitulo-principal">Segurança, compromisso comunitário e nossa visão de futuro.</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="hero-menu">
+        <nav class="menu-topo menu-visivel">
+            <a href="index.html" class="menu-item">
+                <span class="menu-icone"></span> Inicio
+            </a>
+            <a href="ações.html" class="menu-item">
+                <span class="menu-icone"></span> Ações
+            </a>
+            <a href="Diretrizes.html" class="menu-item active">
+                <span class="menu-icone"></span> Diretrizes
+            </a>
+        </nav>
+    </div>
+
+    <main class="conteudo-principal">
+
+        <section class="secao-impacto">
+            <h2 class="titulo-secao">1. Segurança e Sustentabilidade nas Praias</h2>
+            <p class="introducao-secao">Para que as nossas ações práticas (como os mutirões de coleta de lixo) tragam apenas resultados positivos, estabelecemos regras fundamentais de proteção para todos os voluntários envolvidos.</p>
+            
+            <div class="mosaico-acoes">
+                <div class="card-acao-moderno acao-marinho">
+                    <div class="icone-wrapper"></div>
+                    <h3>Proteção Obrigatória</h3>
+                    <p>Use sempre luvas grossas e calçados fechados durante as coletas. Isso evita acidentes com pedaços de vidro, metals enferrujados ou espinhos escondidos na areia.</p>
+                </div>
+
+                <div class="card-acao-moderno acao-oleo">
+                    <div class="icone-wrapper"></div>
+                    <h3>Materiais Perigosos</h3>
+                    <p>Nunca toque em resíduos químicos estranhos, seringas ou animais marinhos encalhados. Caso encontre algo assim, avise imediatamente a coordenação do projeto.</p>
+                </div>
+
+                <div class="card-acao-moderno acao-consumo">
+                    <div class="icone-wrapper"></div>
+                    <h3>Triagem Correta</h3>
+                    <p>O lixo recolhido deve ser separado imediatamente entre recicláveis e rejeitos. Assim, garantimos que o plástico vá para o lugar certo e não lote os lixões comuns.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="secao-impacto">
+            <h2 class="titulo-secao">2. Conscientização e Normas da Comunidade</h2>
+            <p class="introducao-secao">A proteção ambiental começa nas nossas atitudes diárias e na forma como espalhamos essa ideia na nossa cidade e na internet.</p>
+            
+            <div class="mosaico-acoes">
+                <div class="card-acao-moderno acao-redes">
+                    <div class="icone-wrapper"></div>
+                    <h3>Combate ao Desperdício</h3>
+                    <p>Reduza o uso de plásticos de uso único no seu dia a dia, como sacolinhas e copos descartáveis. Substitua por opções reutilizáveis sempre que puder.</p>
+                </div>
+
+                <div class="card-acao-moderno acao-falar">
+                    <div class="icone-wrapper"></div>
+                    <h3>Espaço Seguro e Positivo</h3>
+                    <p>Tanto nas ações de rua quanto nos nossos espaços de diálogo, defendemos o respeito mútuo. Nosso foco é construir soluções e incentivar uns aos outros!</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="container-caixa">
+            <h2 class="titulo-secao">3. O Impacto que Queremos Deixar</h2>
+            <p>Estas diretrizes não servem apenas para organizar o projeto, elas são o caminho para alcançar o futuro que desejamos para a nossa região:</p>
+            
+            <ul>
+                <li><strong>Sustentabilidade Local:</strong> Praias permanentemente limpas que valorizam a beleza natural da nossa cidade e fortalecem o turismo consciente.</li>
+                <li><strong>Proteção à Saúde:</strong> Menos microplásticos poluindo o mar significa um ecossistema mais saudável e alimentos mais puros para a nossa mesa.</li>
+                <li><strong>Fortalecimento Econômico:</strong> O cuidado com o oceano garante o sustento direto das comunidades pesqueiras locais, protegendo a vida marinha de forma justa.</li>
+                <li><strong>Geração Consciente:</strong> Criar uma rede de cidadãos ativos que entendem o valor da preservação e cuidam do meio ambiente como se fosse sua própria casa.</li>
+            </ul>
+        </section>
+
+        <section class="secao-formulario">
+            <h2 class="titulo-secao">deixe seu comentário aqui!</h2>
+            <p class="introducao-secao">Gostou do nosso projeto? Tem algo a dizer? Diga o que você achou dele!
+Deixe sua opinião. Sua voz é fundamental para fortalecer o compromisso do Ponto Eco.</p>
+            
+            <form class="formulario-contato" id="form-diretriz" style="display: flex; flex-direction: column; gap: 15px;">
+                <div class="linha-formulario">
+                    <input type="text" id="nome-colaborador" placeholder="Seu Nome" required>
+                </div>
+                <textarea id="texto-diretriz" placeholder="Descreva sua sugestão de diretriz ou melhoria..." rows="3" required style="font-family: 'Montserrat', sans-serif; resize: vertical; min-height: 100px; display: block;"></textarea>
+                
+                <button type="submit" class="botao-enviar" style="display: block !important; margin: 10px auto 0 !important; padding: 12px 35px !important; width: max-content !important; background: rgba(20, 184, 166, 0.2) !important; color: #ffffff !important; border: 1px solid rgba(255,255,255,0.3) !important; border-radius: 50px !important; font-family: 'Montserrat', sans-serif !important; font-size: 0.9rem !important; font-weight: 600 !important; cursor: pointer !important; transition: 0.3s ease !important;">Enviar Sugestão</button>
+            </form>
+
+            <div id="lista-comentarios" style="margin-top: 30px; text-align: left; width: 100%; max-width: 100%;"></div>
+        </section>
+
+    </main>
+
+    <footer class="rodape-navegacao">
+        <a href="#topo-inicio" class="link-volta-fim">▲ Voltar ao topo</a>
+        <p class="creditos-desenvolvedor">&copy; 2026 Ponto Eco. Desenvolvido por Thauane 💚</p>
+    </footer>
+
+</body>
+</html>

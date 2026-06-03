@@ -1,0 +1,207 @@
+/* 1. VÍDEO DE FUNDO (Fixo e Imersivo) */
+.video-fundo-container {
+    position: fixed;
+    top: 0; left: 0; 
+    width: 100%; 
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+.video-fundo {
+    width: 100vw; 
+    height: 100vh;
+    object-fit: cover;
+}
+.video-overlay {
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: rgba(2, 27, 40, 0.6);
+    z-index: 0;
+}
+
+/* 2. RESET E ESTILO GERAL */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box;
+ }
+
+body { 
+    font-family: 'Montserrat', sans-serif; 
+    color: #e2e8f0; 
+    line-height: 1.6; 
+    background: #021627;
+}
+
+/* 3. TÍTULO PRINCIPAL DO CABEÇALHO (O de impacto) */
+.titulo-heroi-impacto {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: clamp(3rem, 8vw, 5.5rem) !important;
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: #ffffff !important;
+    text-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    line-height: 0.9 !important;
+    margin-bottom: 25px !important;
+    padding: 0 10px;
+}
+
+/* 4. CABEÇALHO E MENU (Limpos) */
+header { 
+    position: relative; 
+    z-index: 1; 
+    text-align: center; 
+    padding: 120px 20px 60px; 
+}
+
+.menu-visivel { 
+    position: relative; 
+    z-index: 2; 
+    display: flex; 
+    justify-content: center; 
+    gap: 15px; 
+    margin-top: 20px; 
+    width: 100%;
+}
+
+.menu-item { 
+    color: #fff; 
+    padding: 10px 20px; 
+    border: 1px solid rgba(255,255,255,0.2); 
+    border-radius: 50px; 
+    text-decoration: none; 
+    font-size: 0.9rem; 
+    transition: 0.3s;
+}
+
+.menu-item:hover {
+     background: rgba(255,255,255,0.1);
+     }
+
+.menu-item.active {
+    font-weight: 700 !important;
+    color: #ff4d4d !important;
+    border-color: rgba(255, 77, 77, 0.4) !important;
+    background: rgba(255, 77, 77, 0.1) !important;
+}
+
+/* 5. CAIXINHAS ELEGANTES */
+.secao-impacto, .container-caixa, .secao-formulario, .card-acao-moderno, .container-caixa li {
+    position: relative; 
+    z-index: 1;
+    background: rgba(20, 184, 166, 0.12) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+    padding: 25px !important;
+    margin: 20px auto !important;
+    max-width: 800px !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2) !important;
+}
+
+.titulo-secao { 
+    font-size: 1.4rem !important; 
+    color: #ffffff !important; 
+    margin-bottom: 15px !important; 
+    text-align: center;
+ }
+
+/* 6. FORMULÁRIO */
+input, textarea { 
+    background: rgba(255,255,255,0.05) !important; 
+    border: 1px solid rgba(255,255,255,0.1) !important; 
+    padding: 12px; 
+    border-radius: 12px !important; 
+    color: white !important; width: 100%; 
+}
+
+/* 7. RODAPÉ que criar a bolinha no Voltar ao Topo) */
+.rodape-navegacao { 
+    position: relative; 
+    z-index: 1; 
+    text-align: center; 
+    padding: 60px 40px 40px; 
+    color: #fff;
+}
+
+.link-volta-fim {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    color: #fff !important;
+    padding: 14px 32px !important;
+    /* Vidro nítido com tom verde-água */
+    background: rgba(20, 184, 166, 0.18) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    text-decoration: none !important;
+    font-size: 0.85rem !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    margin-bottom: 20px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6) !important;
+}
+
+.link-volta-fim:hover {
+    background: rgba(20, 184, 166, 0.3) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    transform: translateY(-3px);
+}
+
+.btn-saiba-mais {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    background: rgba(20, 184, 166, 0.18) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    color: #ffffff !important;
+    font-size: 0.85rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 8. RESPONSIVIDADE */
+@media (max-width: 768px) {
+    header {padding: 80px 10px; }
+    .menu-visivel { flex-wrap: wrap; gap: 10px; padding: 0 10px; }
+    .secao-impacto, .container-caixa { margin: 15px !important; }
+}
+
+/* ==========================================================================
+   9. ROLAGEM: BARRINHA DE VIDRO FIXA NO TOPO
+   ========================================================================== */
+.hero-menu.hero-menu--sticky {
+    position: fixed !important;
+    top: 0 !important; 
+    left: 0 !important; 
+    right: 0 !important;
+    width: 100% !important; 
+    margin-top: 0 !important; 
+    padding: 25px 0 !important;
+    background: rgba(2, 19, 35, 0.348) !important; /* Fundo de vidro visível e elegante */
+    backdrop-filter: blur(15px) !important; 
+    -webkit-backdrop-filter: blur(15px) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+    z-index: 999999999 !important; /* este passa por cima das caixas e imagens com total autoridade */
+    display: flex !important;
+    justify-content: center !important;
+}

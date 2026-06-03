@@ -1,0 +1,568 @@
+/* ==========================================================================
+   1. RESET E CONFIGURAÇÕES GERAIS
+   ========================================================================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Montserrat', sans-serif; background: radial-gradient(circle at top, rgba(20,184,166,0.18), transparent 25%), linear-gradient(135deg, #021627 0%, #071f3b 45%, #04213d 100%); min-height: 100vh; background-attachment: fixed; color: #e2e8f0; line-height: 1.8; font-size: 17px; }
+a { text-decoration: none; transition: all 0.3s ease; }
+
+.topo-inicio { scroll-behavior: smooth; }
+
+/* ==========================================================================
+   2. MENU SUPERIOR DE NAVEGAÇÃO
+   ========================================================================== */
+.menu-visivel { display: flex; justify-content: center; align-items: center; gap: 18px; padding: 10px 0; margin: 0 16px; }
+.menu-visivel a { color: #f8fafc; font-weight: 500; text-transform: uppercase; font-size: 0.95rem; padding: 12px 16px; border-radius: 999px; background: transparent; box-shadow: none; border: 1px solid rgba(255,255,255,0.12); white-space: nowrap; transition: transform 0.2s ease, background 0.3s ease, color 0.3s ease; }
+.menu-visivel a:hover { background: rgba(255,255,255,0.12); color: #ffffff; transform: translateY(-1px); }
+
+.menu-visivel a.active {
+    font-weight: 700 !important;
+    color: #ff4d4d !important;
+    border-color: rgba(255, 77, 77, 0.4) !important;
+    background: rgba(255, 77, 77, 0.1) !important;
+}
+
+.menu-item .menu-icone { margin-right: 8px; }
+
+.hero-menu {
+    display: flex;
+    justify-content: center;
+    margin-top: -80px; /* Ajuste para compensar a saída do header */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: transparent;
+    padding: 25px 0;
+    border-radius: 0;
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+    transition: transform 0.25s ease-out, background 0.25s ease-out, box-shadow 0.25s ease-out;
+    will-change: transform;
+    width: 100%;
+}
+
+.hero-menu.hero-menu--sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin-top: 0;
+    padding: 25px 0;
+    background: rgba(2, 19, 35, 0.45);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+    z-index: 20;
+}
+
+/* ==========================================================================
+   3. CABEÇALHO PRINCIPAL E BOTÃO MUDO (PROTEGIDO)
+   ========================================================================== */
+header { 
+    position: relative;
+    overflow: visible; /* Alterado de hidden para visible para garantir que o botão mudo nunca suma nas bordas */
+    background: transparent;
+    color: #fffefe; 
+    text-align: center; 
+    padding: 160px 24px 90px;
+    width: 100%; 
+    margin: 0 auto; 
+    border-radius: 0; 
+    box-shadow: none;
+    border: none;
+}
+
+.video-fundo-container {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+}
+
+.video-fundo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    z-index: 1;
+}
+
+.video-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(2, 27, 40, 0.35) 0%, rgba(2, 27, 40, 0.80) 100%);
+    z-index: 2;
+}
+
+.header-conteudo {
+    position: relative;
+    z-index: 3;
+}
+
+/* BOTÃO MUDO: Travado com z-index alto e exibição forçada */
+#mute-button {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 9999; /* Valor alto para passar por cima de qualquer elemento visual do banner */
+    padding: 12px 18px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.95);
+    color: #0f172a;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+    white-space: nowrap;
+    display: inline-block !important; /* Força o navegador a renderizar o botão */
+    visibility: visible !important;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#mute-button:hover {
+    background: rgba(255,255,255,1);
+    transform: translateY(-1px);
+}
+
+.fundo-subtitulo { display: block; padding: 0; max-width: 760px; margin: 0 auto; color: rgba(255,255,255,0.92); }
+.fundo-subtitulo p { margin: 0; font-size: 1rem; line-height: 1.7; }
+
+.emoji-grande { font-size: 5.5rem; margin-bottom: 18px; animation: flutuar 3s ease-in-out infinite; }
+header h1 { font-size: clamp(3.5rem, 5vw, 5.8rem); letter-spacing: -0.04em; text-shadow: 3px 3px 18px rgba(0,0,0,0.7); margin-bottom: 18px; line-height: 1.05; }
+
+.frase-campanha { 
+    font-size: 1.4rem; font-weight: 600; color: #1d107c; 
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.9); margin-bottom: 25px; 
+    padding-bottom: 15px; display: inline-block; position: relative;
+}
+.frase-campanha::after {
+    content: ''; position: absolute; bottom: 0; left: 20%; right: 20%;
+    height: 3px; background-color: #f97316; border-radius: 2px;
+    box-shadow: 0 0 10px rgba(249, 115, 22, 0.8);
+}
+
+@keyframes flutuar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+/* ==========================================================================
+   4. CONFIGURAÇÃO PADRÃO DOS TÍTULOS EXTERNOS
+   ========================================================================== */
+body > h2, body > h3,
+.bloco-efeito-tras h2, .bloco-efeito-tras h3,
+.container-acoes h2, .section-beneficios h3,
+.container-detalhes h3, .container-objetivo h3, .container-links h2,
+.container-campanha h2 {
+    max-width: 900px;
+    margin: 50px auto 20px auto; 
+    padding-left: 0;
+    text-align: center;
+    color: #f5f0f0;
+    font-weight: 700;
+    display: block;
+    width: 100%;
+    font-size: 2.4rem;
+    line-height: 1.1;
+    text-shadow: 0 2px 12px rgba(5, 5, 5, 0.45);
+}
+
+
+/* ==========================================================================
+   5. ESTRUTURA DOS QUADRADINHOS DE RESPOSTA
+   ========================================================================== */
+section, .container-acoes, .section-beneficios {
+    max-width: 900px;
+    margin: 0 auto;
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+}
+
+.bloco-efeito-tras {
+    position: relative; 
+    z-index: 1;
+    background: transparent !important;
+    backdrop-filter: none;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 20px !important;
+}
+
+section > p, .container, .container-detalhes, .container-objetivo, .container-campanha, .container-acoes, .section-beneficios { 
+    max-width: 800px !important; 
+    margin: 0 auto 30px auto; 
+    padding: 25px !important; 
+    background: rgba(20, 184, 166, 0.12) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2) !important;
+    color: #fdfeff;
+    line-height: 1.8;
+    border-left: none !important;
+}
+
+/* ==========================================================================
+   5.1 SOLUÇÃO DA URGÊNCIA
+   ========================================================================== */
+.container-campanha { 
+    max-width: 800px !important; 
+    margin: 60px auto 30px auto !important; 
+    padding: 25px !important; 
+    background: rgba(20, 184, 166, 0.12) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+    position: relative;
+    border-left: none !important;
+}
+
+.container-campanha > p {
+    margin: 0 0 15px 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+.container-campanha > p:last-child { margin-bottom: 0; }
+
+/* ==========================================================================
+   6. ORGANIZAÇÃO DAS AÇÕES EM BLOQUINHOS
+   ========================================================================== */
+.container-acoes ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 900px;
+    display: grid;
+    gap: 22px;
+}
+
+.container-acoes li {
+    position: relative;
+    padding: 28px 28px 28px 92px;
+    background: rgba(20, 184, 166, 0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    color: #f9f9fa;
+    line-height: 1.8;
+    transition: transform 0.25s ease, background 0.25s ease;
+    min-height: 170px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: 4px solid rgba(15, 219, 238, 0.927);
+}
+
+.container-acoes li:hover {
+    transform: translateY(-3px);
+    background: rgba(20, 184, 166, 0.18);
+}
+
+.container-acoes li::before {
+    content: '🛍️';
+    position: absolute;
+    top: 50%;
+    left: 28px;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #14b8a6, #04f4946c);
+    color: #f2eded;
+    font-size: 1.1rem;
+    border-left: 4px solid rgba(15, 204, 238, 0.862);
+}
+
+.container-acoes li:nth-child(2)::before { content: '🗑️'; }
+.container-acoes li:nth-child(3)::before { content: '💧'; }
+.container-acoes li:nth-child(4)::before { content: '🐟'; }
+.container-acoes li:nth-child(5)::before { content: '♻️'; }
+
+.container-acoes li strong {
+    display: block;
+    margin-bottom: 10px;
+    color: #f3f4f7;
+    font-size: 1.05rem;
+}
+
+/* ==========================================================================
+   7. ORGANIZAÇÃO DOS BENEFÍCIOS EM BLOQUINHOS
+   ========================================================================== */
+.section-beneficios {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-items: stretch;
+    grid-auto-rows: 1fr;
+    gap: 26px;
+    max-width: 900px;
+    margin: 0 auto 60px auto;
+    align-items: stretch;
+}
+
+.section-beneficios h3 {
+    grid-column: 1 / -1; /* Faz o título ocupar todas as colunas da grade */
+    width: 100%;
+    text-align: center;
+    margin-bottom: 30px;
+    text-align: center !important;
+    margin: 50px auto 30px auto !important;
+    display: block;
+    font-size: 2.4rem !important;
+}
+
+.caixa-beneficio {
+    width: 100%;
+    padding: 25px;
+    background: rgba(20, 184, 166, 0.12);
+    backdrop-filter: blur(8px);
+    border-radius:20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ebedf0;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    border-left: none;
+    text-align: center;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.caixa-beneficio:hover {
+    transform: translateY(-5px);
+    background: rgba(20, 184, 166, 0.18);
+}
+
+.caixa-beneficio::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(20,184,166,0.14), transparent 38%);
+    pointer-events: none;
+}
+
+.btn-saiba-mais {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    background: rgba(20, 184, 165, 0.055) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important; 
+    color: #ffffff !important;
+    align-self: center;
+    font-size: 0.9rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.542);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+.btn-saiba-mais:hover {
+    background: rgba(20, 184, 166, 0.25);
+    border-color: rgba(20, 184, 166, 0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Garante que imagens ou ícones dentro do botão fiquem nítidos e vivos */
+.btn-saiba-mais img, .btn-saiba-mais i {
+    filter: none !important;
+    opacity: 1 !important;
+    margin-right: 8px;
+}
+
+.caixa-beneficio p { position: relative; z-index: 1; margin: 0; padding: 0; }
+
+/* ==========================================================================
+   8. SEÇÃO CONHEÇA A REDEMAR BRASIL
+   ========================================================================== */
+.container-links { text-align: center; margin: 60px auto 50px auto; max-width: 900px; position: relative; padding: 0; }
+.caixa-link-destacada {
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, rgba(2,38,58,0.78), rgba(7,25,41,0.82)), url('https://media.istockphoto.com/id/1283314654/photo/coral-reef-and-tropical-fish-bohol-philippines-4k-video.jpg?s=170667a&w=0&k=20&c=oPY_-cf-MzXPP4Rw_v-myrH_1HW7hTNOCV7nD3DtVh4=');
+    background-position: center; background-size: cover; border: 1px solid rgba(255,255,255,0.16); border-radius: 30px;
+    padding: 110px 40px; position: relative; overflow: hidden;
+    box-shadow: 0 28px 70px rgba(0,0,0,0.16);
+}
+.conteudo-link-destaque { 
+    position: relative; 
+    z-index: 2; color: white; 
+    text-align: center;
+ }
+
+.texto-link-destaque h4 { 
+    font-size: 3rem; 
+    margin-bottom: 15px; 
+    text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+ }
+
+.seta-link { 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 40px;
+    background: rgba(20, 184, 166, 0.18) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    color: white !important;
+    font-weight: 900;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6) !important;
+}
+
+.seta-link:hover {
+    background: rgba(20, 184, 166, 0.3) !important;
+    transform: translateY(-3px);
+}
+
+/* ==========================================================================
+   9. ANIMAÇÕES E ANIMAIS
+   ========================================================================== */
+.img-animada { 
+    position: absolute; 
+    z-index: 1 !important; /* Mantém as imagens atrás do texto, mas na frente do fundo */
+    pointer-events: none; 
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.75)) !important; 
+}
+.animacao-baleia {
+     width: 165px; 
+     left: 20px; 
+     bottom: 15px; 
+     animation: nadarBaleia 6s ease-in-out infinite; 
+    }
+
+.animacao-arraia { 
+    width: 95px; 
+    left: 30px; 
+    top: 20px; 
+    animation: nadarArraia 7s ease-in-out infinite; 
+}
+
+.animacao-tartaruga {
+     width: 120px; 
+     right: 30px; 
+     top: 30px; 
+     animation: nadarTartaruga 5s ease-in-out infinite; 
+    }
+
+@keyframes nadarBaleia { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(2deg); } }
+@keyframes nadarArraia { 0%, 100% { transform: translate(0,0) rotate(-4deg); } 50% { transform: translate(8px, 12px) rotate(3deg); } }
+@keyframes nadarTartaruga { 0%, 100% { transform: translateY(0) rotate(5deg); } 50% { transform: translateY(-18px) rotate(-3deg); } }
+
+/* ==========================================================================
+   10. RODAPÉ E BOTÃO VOLTAR
+   ========================================================================== */
+.rodape-navegacao { 
+    position: relative; 
+    z-index: 1; 
+    text-align: center; 
+    padding: 60px 40px 40px; 
+    color: #fff;
+}
+
+.link-volta-fim {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    color: #fff !important;
+    padding: 14px 32px !important;
+    /* Vidro nítido com tom verde-água padronizado */
+    background: rgba(20, 184, 166, 0.18) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important; /* Formato quadradinho */
+    text-decoration: none !important;
+    font-size: 0.85rem !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    margin-bottom: 20px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6) !important;
+}
+
+.link-volta-fim:hover {
+    background: rgba(20, 184, 166, 0.3) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    transform: translateY(-3px);
+}
+
+/* ==========================================================================
+   11. RESPONSIVIDADE COMPLETA (MOBILE E TABLET)
+   ========================================================================== */
+@media (max-width: 768px) {
+    header { 
+        padding: 130px 14px 70px; /* Aumentado de leve o espaço interno para acolher as coisas */
+        max-width: 100%; 
+        margin: 0px auto; /* Mudado de "25px 16px" para "0px auto" para consertar o alinhamento do topo */
+    }
+    header h1 { font-size: 2.5rem; }
+    
+    /* Força os botões do menu a continuarem perfeitamente alinhados lado a lado, encolhendo elegantemente */
+    .menu-visivel { 
+        flex-wrap: nowrap !important; 
+        gap: 8px; 
+        padding: 10px 4px;
+        margin: 0 auto;
+        justify-content: center;
+    }
+    
+    .menu-visivel a { 
+        font-size: 0.75rem !important; 
+        padding: 10px 12px !important; 
+    }
+    
+    .hero-menu { margin-top: 32px; }
+
+    /* BOTÃO MUDO NO MOBILE */
+    #mute-button {
+        top: 16px !important; 
+        right: 16px !important; 
+        padding: 8px 14px !important;
+        font-size: 0.8rem !important;
+        position: absolute !important;
+    }
+
+    .caixa-link-destacada { 
+        padding: 100px 20px; 
+    }
+    .img-animada { 
+        width: 70px !important;
+    }
+    body > h2, body > h3, .bloco-efeito-tras h2, .container-acoes h2, .section-beneficios h3, .container-detalhes h3, .container-objetivo h3, .container-links h2, .container-campanha h2 {
+        padding-left: 15px;
+        padding-right: 15px;
+        font-size: 1.75rem;
+    }
+    .section-beneficios {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+        padding: 0 12px;
+    }
+    .caixa-beneficio {
+        max-width: 100%;
+    }
+}
