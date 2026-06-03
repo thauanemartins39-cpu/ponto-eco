@@ -201,7 +201,7 @@ input, textarea {
     backdrop-filter: blur(15px) !important; 
     -webkit-backdrop-filter: blur(15px) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
-    z-index: 999999999 !important; /* este passa por cima das caixas e imagens com total autoridade */
+    z-index: 2000 !important; 
     display: flex !important;
     justify-content: center !important;
 }
