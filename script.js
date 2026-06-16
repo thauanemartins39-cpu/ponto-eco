@@ -24,7 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const listaComentarios = document.getElementById('lista-comentarios');
 
     if (formDiretriz && listaComentarios) {
-        const BACKEND_URL = 'http://127.0.0.1:8000';
+        const BACKEND_URL = location.protocol.startsWith('http')
+            ? `${location.protocol}//${location.hostname}:8000`
+            : 'http://localhost:8000';
 
         const CHAVE_USUARIO = 'ponto_eco_token_voter';
 
@@ -274,6 +276,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Erro ao enviar comentário:', e);
                 alert(`Erro ao enviar comentário. Verifique se o servidor está rodando em ${BACKEND_URL}.`);
             }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                atualizarInterface();
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            atualizarInterface();
         });
 
         atualizarInterface();
