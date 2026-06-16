@@ -21,7 +21,18 @@ CREATE TABLE IF NOT EXISTS comentarios (
     nome TEXT NOT NULL,
     texto TEXT NOT NULL,
     autorToken TEXT NOT NULL,
-    created_at INTEGER NOT NULL
+    parent_id TEXT,
+    created_at INTEGER NOT NULL,
+    FOREIGN KEY(parent_id) REFERENCES comentarios(id) ON DELETE CASCADE
+)
+''')
+conn.execute('''
+CREATE TABLE IF NOT EXISTS reacoes (
+    comment_id TEXT NOT NULL,
+    user_token TEXT NOT NULL,
+    reaction TEXT NOT NULL CHECK (reaction IN ('up', 'down')),
+    PRIMARY KEY (comment_id, user_token),
+    FOREIGN KEY(comment_id) REFERENCES comentarios(id) ON DELETE CASCADE
 )
 ''')
 conn.commit()
@@ -42,6 +53,12 @@ class ComentarioIn(BaseModel):
     nome: str
     texto: str
     autorToken: str
+    parentId: str | None = None
+
+
+class ReactionIn(BaseModel):
+    token: str
+    reaction: str
 
 
 clients: list[WebSocket] = []
@@ -65,7 +82,21 @@ def broadcast(message: dict):
 
 @app.get('/comments')
 def get_comments():
-    cur = conn.execute('SELECT * FROM comentarios ORDER BY created_at DESC')
+    cur = conn.execute('''
+        SELECT
+            c.id,
+            c.nome,
+            c.texto,
+            c.autorToken,
+            c.parent_id,
+            c.created_at,
+            COALESCE(SUM(CASE WHEN r.reaction = 'up' THEN 1 ELSE 0 END), 0) AS upvotes,
+            COALESCE(SUM(CASE WHEN r.reaction = 'down' THEN 1 ELSE 0 END), 0) AS downvotes
+        FROM comentarios c
+        LEFT JOIN reacoes r ON r.comment_id = c.id
+        GROUP BY c.id
+        ORDER BY c.created_at DESC
+    ''')
     rows = [dict(r) for r in cur.fetchall()]
     return rows
 
@@ -75,12 +106,14 @@ def post_comment(c: ComentarioIn):
     nid = c.id or f"id_{int(time.time()*1000)}"
     now = int(time.time())
     try:
-        conn.execute('INSERT INTO comentarios (id,nome,texto,autorToken,created_at) VALUES (?,?,?,?,?)',
-                     (nid, c.nome, c.texto, c.autorToken, now))
+        conn.execute(
+            'INSERT INTO comentarios (id,nome,texto,autorToken,parent_id,created_at) VALUES (?,?,?,?,?,?)',
+            (nid, c.nome, c.texto, c.autorToken, c.parentId, now)
+        )
         conn.commit()
     except sqlite3.IntegrityError:
         raise HTTPException(status_code=400, detail='ID já existe')
-    broadcast({'action': 'new', 'id': nid})
+    broadcast({'action': 'refresh'})
     return {'status': 'ok', 'id': nid}
 
 
@@ -95,8 +128,35 @@ def delete_comment(cid: str, token: str | None = None):
         raise HTTPException(status_code=403, detail='somente o autor pode deletar')
     conn.execute('DELETE FROM comentarios WHERE id = ?', (cid,))
     conn.commit()
-    broadcast({'action': 'delete', 'id': cid})
+    broadcast({'action': 'refresh'})
     return {'status': 'deleted'}
+
+
+@app.post('/comments/{cid}/reactions')
+def react_comment(cid: str, payload: ReactionIn):
+    cur = conn.execute('SELECT id FROM comentarios WHERE id = ?', (cid,)).fetchone()
+    if not cur:
+        raise HTTPException(status_code=404, detail='comentário não encontrado')
+
+    existing = conn.execute(
+        'SELECT reaction FROM reacoes WHERE comment_id = ? AND user_token = ?',
+        (cid, payload.token)
+    ).fetchone()
+
+    if existing and existing['reaction'] == payload.reaction:
+        conn.execute(
+            'DELETE FROM reacoes WHERE comment_id = ? AND user_token = ?',
+            (cid, payload.token)
+        )
+    else:
+        conn.execute(
+            'INSERT OR REPLACE INTO reacoes (comment_id, user_token, reaction) VALUES (?,?,?)',
+            (cid, payload.token, payload.reaction)
+        )
+
+    conn.commit()
+    broadcast({'action': 'refresh'})
+    return {'status': 'ok'}
 
 
 @app.websocket('/ws/comments')
@@ -111,3 +171,8 @@ async def websocket_endpoint(ws: WebSocket):
             clients.remove(ws)
         except ValueError:
             pass
+
+
+if __name__ == '__main__':
+    import uvicorn
+    uvicorn.run(app, host='0.0.0.0', port=8000)
