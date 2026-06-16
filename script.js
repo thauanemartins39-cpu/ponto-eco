@@ -63,7 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!resp.ok) throw new Error('Falha ao buscar comentários');
                 return await resp.json();
             } catch (e) {
-                return [];
+                console.warn('Não foi possível atualizar os comentários agora.', e);
+                return null;
             }
         }
 
@@ -190,6 +191,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         async function atualizarInterface() {
             const comentarios = await buscarComentarios();
+            if (!Array.isArray(comentarios)) {
+                return;
+            }
+
             listaComentarios.innerHTML = '';
 
             if (comentarios.length === 0) {
