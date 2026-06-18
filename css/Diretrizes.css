@@ -109,6 +109,73 @@ header, .banner-verde {
     width: 100%;
 }
 
+.moldura-geral {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 980px;
+    margin: 16px auto 28px;
+    padding: 52px 24px 64px;
+    border-radius: 24px;
+    background: linear-gradient(165deg, rgba(13, 66, 97, 0.16), rgba(3, 24, 44, 0.08));
+    border: 1px solid rgba(210, 239, 255, 0.28);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    overflow: visible;
+}
+
+.moldura-geral::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1.6px solid rgba(210, 239, 255, 0.76);
+    border-radius: 18px;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.moldura-geral::after {
+    content: '';
+    position: absolute;
+    inset: 18px;
+    border: 1px solid rgba(167, 223, 248, 0.45);
+    border-radius: 14px;
+    background:
+        radial-gradient(circle at 14% 14%, rgba(236, 249, 255, 0.95) 0 3px, transparent 3.4px),
+        radial-gradient(circle at 86% 18%, rgba(236, 249, 255, 0.9) 0 2.7px, transparent 3.1px),
+        radial-gradient(circle at 10% 78%, rgba(236, 249, 255, 0.9) 0 2.9px, transparent 3.3px),
+        radial-gradient(circle at 88% 84%, rgba(236, 249, 255, 0.95) 0 3px, transparent 3.4px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.moldura-geral > * {
+    position: relative;
+    z-index: 2;
+}
+
+.conteudo-principal,
+.conteudo-principal p,
+.conteudo-principal li,
+.conteudo-principal h2,
+.conteudo-principal h3,
+.titulo-principal,
+.subtitulo-principal {
+    color: #e2e8f0;
+}
+
+.titulo-principal {
+    color: #ffffff;
+}
+
+.moldura-geral > header,
+.moldura-geral > .hero-menu,
+.moldura-geral > main,
+.moldura-geral > footer {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .conteudo-principal {
     position: relative;
     z-index: 1;
@@ -271,6 +338,7 @@ input, textarea {
 
 /* 8. RESPONSIVIDADE */
 @media (max-width: 768px) {
+    .moldura-geral { max-width: 100%; padding: 30px 12px 38px; margin: 6px 8px 14px; border-radius: 16px; }
     header {padding: 80px 10px; }
     .menu-visivel { flex-wrap: wrap; gap: 10px; padding: 0 10px; }
     .secao-impacto, .container-caixa { margin: 15px !important; }
@@ -282,16 +350,16 @@ input, textarea {
 .hero-menu.hero-menu--sticky {
     position: fixed !important;
     top: 0 !important; 
-    left: 0 !important; 
+    left: 0 !important;
     right: 0 !important;
-    width: 100% !important; 
+    width: 100vw !important;
     margin-top: 0 !important; 
     padding: 25px 0 !important;
     background: rgba(2, 19, 35, 0.348) !important; /* Fundo de vidro visível e elegante */
     backdrop-filter: blur(15px) !important; 
     -webkit-backdrop-filter: blur(15px) !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
-    z-index: 2000 !important; 
+    z-index: 2000 !important;
     display: flex !important;
     justify-content: center !important;
 }

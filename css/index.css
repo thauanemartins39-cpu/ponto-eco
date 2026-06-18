@@ -27,8 +27,8 @@ a { text-decoration: none; transition: all 0.3s ease; }
     display: flex;
     justify-content: center;
     margin-top: -80px; /* Ajuste para compensar a saída do header */
-    position: sticky;
-    top: 0;
+    position: relative;
+    top: auto;
     z-index: 1000;
     background: transparent;
     padding: 25px 0;
@@ -45,13 +45,65 @@ a { text-decoration: none; transition: all 0.3s ease; }
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    right: 0;
+    width: 100vw;
     margin-top: 0;
     padding: 25px 0;
     background: rgba(2, 19, 35, 0.45);
     backdrop-filter: blur(12px);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
     z-index: 1100;
+}
+
+.moldura-geral {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 980px;
+    margin: 16px auto 28px;
+    padding: 52px 24px 64px;
+    border-radius: 24px;
+    background: linear-gradient(165deg, rgba(13, 66, 97, 0.16), rgba(3, 24, 44, 0.08));
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    overflow: visible;
+}
+
+.moldura-geral::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1.6px solid rgba(210, 239, 255, 0.76);
+    border-radius: 18px;
+    pointer-events: none;
+}
+
+.moldura-geral::after {
+    content: '';
+    position: absolute;
+    inset: 18px;
+    border: 1px solid rgba(167, 223, 248, 0.45);
+    border-radius: 14px;
+    background:
+        radial-gradient(circle at 14% 14%, rgba(236, 249, 255, 0.95) 0 3px, transparent 3.4px),
+        radial-gradient(circle at 86% 18%, rgba(236, 249, 255, 0.9) 0 2.7px, transparent 3.1px),
+        radial-gradient(circle at 10% 78%, rgba(236, 249, 255, 0.9) 0 2.9px, transparent 3.3px),
+        radial-gradient(circle at 88% 84%, rgba(236, 249, 255, 0.95) 0 3px, transparent 3.4px);
+    pointer-events: none;
+}
+
+.moldura-geral > * {
+    position: relative;
+    z-index: 2;
+}
+
+.moldura-geral > header,
+.moldura-geral > .hero-menu,
+.moldura-geral > .bloco-efeito-tras,
+.moldura-geral > .container-links,
+.moldura-geral > footer {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* ==========================================================================
@@ -545,6 +597,7 @@ section > p, .container, .container-detalhes, .container-objetivo, .container-ca
    11. RESPONSIVIDADE COMPLETA (MOBILE E TABLET)
    ========================================================================== */
 @media (max-width: 768px) {
+    .moldura-geral { max-width: 100%; padding: 30px 12px 38px; margin: 6px 8px 14px; border-radius: 16px; }
     header { 
         padding: 130px 14px 70px; /* Aumentado de leve o espaço interno para acolher as coisas */
         max-width: 100%; 

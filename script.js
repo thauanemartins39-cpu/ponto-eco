@@ -11,13 +11,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const heroMenu = document.querySelector('.hero-menu');
     if (heroMenu) {
+        let lastScrollY = window.scrollY;
+
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 20) {
+            const currentScrollY = window.scrollY;
+            const delta = currentScrollY - lastScrollY;
+            const scrollingDown = delta > 2;
+            const scrollingUp = delta < -2;
+            const passedTopThreshold = currentScrollY > 28;
+
+            if (scrollingDown && passedTopThreshold) {
                 heroMenu.classList.add('hero-menu--sticky');
-            } else {
+            } else if (scrollingUp || !passedTopThreshold) {
                 heroMenu.classList.remove('hero-menu--sticky');
             }
-        });
+
+            lastScrollY = currentScrollY;
+        }, { passive: true });
     }
 
     const formDiretriz = document.getElementById('form-diretriz');
