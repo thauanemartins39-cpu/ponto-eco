@@ -81,11 +81,6 @@ def script_js():
     return FileResponse(BASE_DIR / 'script.js')
 
 
-@app.get('/api-config.js')
-def api_config_js():
-    return FileResponse(BASE_DIR / 'api-config.js')
-
-
 class ComentarioIn(BaseModel):
     id: str | None = None
     nome: str

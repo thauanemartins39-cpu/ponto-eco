@@ -24,11 +24,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const listaComentarios = document.getElementById('lista-comentarios');
 
     if (formDiretriz && listaComentarios) {
-        const BACKEND_URL = String(window.PONTO_ECO_API_URL || (location.protocol.startsWith('http')
-            ? location.origin
-            : 'http://localhost:8000')).replace(/\/$/, '');
-
         const CHAVE_USUARIO = 'ponto_eco_token_voter';
+        const CHAVE_COMENTARIOS = 'ponto_eco_comentarios_locais';
+        const COMENTARIOS_EXEMPLO = [
+            {
+                id: 'exemplo_1',
+                nome: 'Maria',
+                texto: 'Gostei muito do projeto, achei a ideia importante para a comunidade.',
+                autorToken: 'exemplo_maria',
+                parent_id: null,
+                created_at: Date.now() - 300000,
+                upvotes: 2,
+                downvotes: 0
+            },
+            {
+                id: 'exemplo_2',
+                nome: 'João',
+                texto: 'Seria legal incluir mais fotos das ações do grupo.',
+                autorToken: 'exemplo_joao',
+                parent_id: null,
+                created_at: Date.now() - 180000,
+                upvotes: 1,
+                downvotes: 0
+            }
+        ];
 
         let tokenUsuario = localStorage.getItem(CHAVE_USUARIO);
         if (!tokenUsuario) {
@@ -36,41 +55,43 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem(CHAVE_USUARIO, tokenUsuario);
         }
 
-        const SYNC_KEY = 'ponto_eco_comments_sync';
-        let broadcastChannel = null;
         const respostasAbertas = new Set();
-        if ('BroadcastChannel' in window) {
-            broadcastChannel = new BroadcastChannel('ponto_eco_comments');
-            broadcastChannel.onmessage = () => atualizarInterface();
-        }
 
         window.addEventListener('storage', (event) => {
-            if (event.key === SYNC_KEY) {
+            if (event.key === CHAVE_COMENTARIOS) {
                 atualizarInterface();
             }
         });
 
-        function notificarOutrasAbas() {
-            if (broadcastChannel) {
-                broadcastChannel.postMessage(Date.now());
-            } else {
-                localStorage.setItem(SYNC_KEY, String(Date.now()));
+        function carregarComentarios() {
+            try {
+                const salvos = localStorage.getItem(CHAVE_COMENTARIOS);
+                if (!salvos) {
+                    return [...COMENTARIOS_EXEMPLO];
+                }
+
+                const comentarios = JSON.parse(salvos);
+                return Array.isArray(comentarios) ? comentarios : [...COMENTARIOS_EXEMPLO];
+            } catch (e) {
+                console.warn('Não foi possível carregar os comentários locais.', e);
+                return [...COMENTARIOS_EXEMPLO];
             }
+        }
+
+        function salvarComentarios(comentarios) {
+            localStorage.setItem(CHAVE_COMENTARIOS, JSON.stringify(comentarios));
+        }
+
+        function obterComentariosOrdenados() {
+            return carregarComentarios().sort((a, b) => (a.created_at || 0) - (b.created_at || 0));
+        }
+
+        function criarIdComentario() {
+            return 'id_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
         }
 
         function temRespostaAberta() {
             return respostasAbertas.size > 0;
-        }
-
-        async function buscarComentarios() {
-            try {
-                const resp = await fetch(`${BACKEND_URL}/comments`);
-                if (!resp.ok) throw new Error('Falha ao buscar comentários');
-                return await resp.json();
-            } catch (e) {
-                console.warn('Não foi possível atualizar os comentários agora.', e);
-                return null;
-            }
         }
 
         function criarElementoComentario(com) {
@@ -138,24 +159,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const parentId = formResposta.dataset.parentId || com.id;
 
                 try {
-                    const resp = await fetch(`${BACKEND_URL}/comments`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            nome: nomeResposta,
-                            texto: respostaTexto,
-                            autorToken: tokenUsuario,
-                            parent_id: parentId
-                        })
+                    const comentarios = carregarComentarios();
+                    comentarios.push({
+                        id: criarIdComentario(),
+                        nome: nomeResposta,
+                        texto: respostaTexto,
+                        autorToken: tokenUsuario,
+                        parent_id: parentId,
+                        created_at: Date.now(),
+                        upvotes: 0,
+                        downvotes: 0
                     });
-                    if (!resp.ok) throw new Error('Falha ao enviar resposta');
+                    salvarComentarios(comentarios);
                     formResposta.reset();
                     respostasAbertas.delete(com.id);
                     formResposta.style.display = 'none';
                     formResposta.style.visibility = 'hidden';
                     formResposta.hidden = true;
                     await atualizarInterface();
-                    notificarOutrasAbas();
                 } catch (err) {
                     console.error('Erro ao enviar resposta:', err);
                     alert('Erro ao enviar resposta.');
@@ -229,10 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const comentarios = await buscarComentarios();
-            if (!Array.isArray(comentarios)) {
-                return;
-            }
+            const comentarios = obterComentariosOrdenados();
 
             listaComentarios.innerHTML = '';
 
@@ -250,14 +268,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         async function reagirComentario(id, tipo) {
             try {
-                const resp = await fetch(`${BACKEND_URL}/comments/${encodeURIComponent(id)}/reactions`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: tokenUsuario, reaction: tipo })
-                });
-                if (!resp.ok) throw new Error('Falha ao reagir');
+                const comentarios = carregarComentarios();
+                const comentario = comentarios.find(com => com.id === id);
+                if (!comentario) throw new Error('Comentário não encontrado');
+
+                comentario.upvotes = Number(comentario.upvotes || 0);
+                comentario.downvotes = Number(comentario.downvotes || 0);
+
+                const votoAnterior = comentario.reacaoUsuario;
+                if (votoAnterior === tipo) {
+                    if (tipo === 'up') comentario.upvotes = Math.max(0, comentario.upvotes - 1);
+                    if (tipo === 'down') comentario.downvotes = Math.max(0, comentario.downvotes - 1);
+                    delete comentario.reacaoUsuario;
+                } else {
+                    if (votoAnterior === 'up') comentario.upvotes = Math.max(0, comentario.upvotes - 1);
+                    if (votoAnterior === 'down') comentario.downvotes = Math.max(0, comentario.downvotes - 1);
+
+                    if (tipo === 'up') comentario.upvotes += 1;
+                    if (tipo === 'down') comentario.downvotes += 1;
+                    comentario.reacaoUsuario = tipo;
+                }
+
+                salvarComentarios(comentarios);
                 await atualizarInterface();
-                notificarOutrasAbas();
             } catch (e) {
                 alert('Erro ao registrar reação.');
             }
@@ -265,63 +298,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
         async function deletarComentario(id) {
             try {
-                const resp = await fetch(`${BACKEND_URL}/comments/${encodeURIComponent(id)}?token=${encodeURIComponent(tokenUsuario)}`, {
-                    method: 'DELETE'
-                });
-                if (!resp.ok) throw new Error('Falha ao apagar comentário');
+                const comentarios = carregarComentarios();
+                const comentario = comentarios.find(com => com.id === id);
+                if (!comentario) throw new Error('Falha ao apagar comentário');
+                if (comentario.autorToken !== tokenUsuario) throw new Error('Somente o autor pode apagar');
+
+                const idsParaRemover = new Set([id]);
+
+                function coletarFilhos(parentId) {
+                    comentarios.forEach(com => {
+                        if (com.parent_id === parentId && !idsParaRemover.has(com.id)) {
+                            idsParaRemover.add(com.id);
+                            coletarFilhos(com.id);
+                        }
+                    });
+                }
+
+                coletarFilhos(id);
+                salvarComentarios(comentarios.filter(com => !idsParaRemover.has(com.id)));
                 await atualizarInterface();
-                notificarOutrasAbas();
             } catch (e) {
                 console.error('Erro ao apagar comentário:', e);
-                alert(`Erro ao apagar comentário. Verifique se o servidor está rodando em ${BACKEND_URL}.`);
-            }
-        }
-
-        function conectarWebSocket() {
-            try {
-                const apiUrl = new URL(BACKEND_URL, location.href);
-                apiUrl.protocol = apiUrl.protocol === 'https:' ? 'wss:' : 'ws:';
-                apiUrl.pathname = '/ws/comments';
-                apiUrl.search = '';
-                apiUrl.hash = '';
-                const wsUrl = apiUrl.toString();
-                const ws = new WebSocket(wsUrl);
-
-                ws.addEventListener('message', () => atualizarInterface());
-                ws.addEventListener('open', () => console.info('WebSocket conectado.'));
-                ws.addEventListener('close', () => {
-                    console.info('WebSocket desconectado.');
-                    setTimeout(() => conectarWebSocket(), 3000);
-                });
-            } catch (err) {
-                console.warn('WebSocket não disponível.', err);
+                alert('Erro ao apagar comentário.');
             }
         }
 
         formDiretriz.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const nome = document.getElementById('nome-colaborador').value.trim();
-            const texto = document.getElementById('texto-diretriz').value.trim();
+            const nomeInput = document.getElementById('nome-colaborador');
+            const textoInput = document.getElementById('texto-diretriz');
+            const nome = nomeInput.value.trim();
+            const texto = textoInput.value.trim();
             if (!nome || !texto) return;
 
             try {
-                const resp = await fetch(`${BACKEND_URL}/comments`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        nome,
-                        texto,
-                        autorToken: tokenUsuario
-                    })
+                const comentarios = carregarComentarios();
+                comentarios.push({
+                    id: criarIdComentario(),
+                    nome,
+                    texto,
+                    autorToken: tokenUsuario,
+                    parent_id: null,
+                    created_at: Date.now(),
+                    upvotes: 0,
+                    downvotes: 0
                 });
-                if (!resp.ok) throw new Error('Falha ao salvar comentário');
-                document.getElementById('nome-colaborador').value = '';
-                document.getElementById('texto-diretriz').value = '';
+                salvarComentarios(comentarios);
+                nomeInput.value = '';
+                textoInput.value = '';
                 await atualizarInterface();
-                notificarOutrasAbas();
             } catch (e) {
                 console.error('Erro ao enviar comentário:', e);
-                alert(`Erro ao enviar comentário. Verifique se o servidor está rodando em ${BACKEND_URL}.`);
+                alert('Erro ao enviar comentário.');
             }
         });
 
@@ -336,7 +364,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         atualizarInterface();
-        conectarWebSocket();
-        setInterval(atualizarInterface, 5000);
     }
 });
