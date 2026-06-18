@@ -24,9 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const listaComentarios = document.getElementById('lista-comentarios');
 
     if (formDiretriz && listaComentarios) {
-        const BACKEND_URL = location.protocol.startsWith('http')
-            ? `${location.protocol}//${location.hostname}:8000`
-            : 'http://localhost:8000';
+        const BACKEND_URL = String(window.PONTO_ECO_API_URL || (location.protocol.startsWith('http')
+            ? location.origin
+            : 'http://localhost:8000')).replace(/\/$/, '');
 
         const CHAVE_USUARIO = 'ponto_eco_token_voter';
 
@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const SYNC_KEY = 'ponto_eco_comments_sync';
         let broadcastChannel = null;
+        const respostasAbertas = new Set();
         if ('BroadcastChannel' in window) {
             broadcastChannel = new BroadcastChannel('ponto_eco_comments');
             broadcastChannel.onmessage = () => atualizarInterface();
@@ -57,6 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        function temRespostaAberta() {
+            return respostasAbertas.size > 0;
+        }
+
         async function buscarComentarios() {
             try {
                 const resp = await fetch(`${BACKEND_URL}/comments`);
@@ -74,11 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const autor = document.createElement('strong');
             autor.style.cssText = 'color: #14b8a6; display: block; margin-bottom: 6px; font-size: 0.95rem;';
-            autor.textContent = com.nome;
+            autor.textContent = com.nome || 'Anônimo';
 
             const texto = document.createElement('p');
             texto.style.cssText = 'color: #e2e8f0; white-space: pre-wrap; margin: 0 0 10px 0; font-size: 0.9rem; line-height: 1.4;';
-            texto.textContent = com.texto;
+            texto.textContent = com.texto || '';
 
             const controles = document.createElement('div');
             controles.style.cssText = 'display: flex; gap: 8px; flex-wrap: wrap; align-items: center;';
@@ -99,28 +104,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 await reagirComentario(com.id, 'down');
             });
 
-            const botaoResponder = document.createElement('button');
-            botaoResponder.type = 'button';
-            botaoResponder.textContent = 'Responder';
-            botaoResponder.style.cssText = 'background: transparent; color: #bfdbfe; border: 0; cursor: pointer; font-weight: 600;';
-            botaoResponder.addEventListener('click', () => {
-                formResposta.style.display = 'block';
-                const inputNome = formResposta.querySelector('input');
-                if (inputNome) inputNome.focus();
-            });
-
             const formResposta = document.createElement('form');
-            formResposta.style.cssText = 'display: none; margin-top: 10px;';
+            formResposta.dataset.parentId = com.id;
+            formResposta.style.cssText = 'display: none; visibility: hidden; margin-top: 10px;';
             formResposta.innerHTML = `
                 <input type="text" placeholder="Seu nome" required style="width: 100%; margin-bottom: 8px; border-radius: 10px; padding: 10px; font-family: 'Montserrat', sans-serif;">
                 <textarea placeholder="Escreva uma resposta..." rows="2" required style="width: 100%; min-height: 70px; border-radius: 10px; padding: 10px; font-family: 'Montserrat', sans-serif; resize: vertical;"></textarea>
                 <button type="submit" style="margin-top: 8px; background: rgba(20, 184, 166, 0.18); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; padding: 8px 12px; cursor: pointer;">Enviar resposta</button>
             `;
+
+            const botaoResponder = document.createElement('button');
+            botaoResponder.type = 'button';
+            botaoResponder.textContent = 'Responder';
+            botaoResponder.style.cssText = 'background: transparent; color: #bfdbfe; border: 0; cursor: pointer; font-weight: 600;';
+            botaoResponder.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                respostasAbertas.add(com.id);
+                formResposta.style.display = 'block';
+                formResposta.style.visibility = 'visible';
+                formResposta.hidden = false;
+                const inputNome = formResposta.querySelector('input');
+                if (inputNome) {
+                    inputNome.focus();
+                }
+            });
             formResposta.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const nomeResposta = formResposta.querySelector('input').value.trim();
-                const respostaTexto = formResposta.querySelector('textarea').value.trim();
+                const nomeResposta = formResposta.querySelector('input')?.value.trim();
+                const respostaTexto = formResposta.querySelector('textarea')?.value.trim();
                 if (!nomeResposta || !respostaTexto) return;
+
+                const parentId = formResposta.dataset.parentId || com.id;
 
                 try {
                     const resp = await fetch(`${BACKEND_URL}/comments`, {
@@ -130,12 +145,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             nome: nomeResposta,
                             texto: respostaTexto,
                             autorToken: tokenUsuario,
-                            parentId: com.id
+                            parent_id: parentId
                         })
                     });
                     if (!resp.ok) throw new Error('Falha ao enviar resposta');
                     formResposta.reset();
+                    respostasAbertas.delete(com.id);
                     formResposta.style.display = 'none';
+                    formResposta.style.visibility = 'hidden';
+                    formResposta.hidden = true;
                     await atualizarInterface();
                     notificarOutrasAbas();
                 } catch (err) {
@@ -162,34 +180,55 @@ document.addEventListener('DOMContentLoaded', () => {
             card.appendChild(texto);
             card.appendChild(controles);
             card.appendChild(formResposta);
+
+            if (respostasAbertas.has(com.id)) {
+                formResposta.style.display = 'block';
+                formResposta.style.visibility = 'visible';
+                formResposta.hidden = false;
+            }
+
             return card;
         }
 
         function criarListaComentarios(comentarios) {
             const comentariosTop = comentarios.filter(com => !com.parent_id);
-            const mapa = new Map(comentarios.map(com => [com.id, com]));
 
             const container = document.createElement('div');
             container.style.cssText = 'display: flex; flex-direction: column; gap: 8px;';
 
-            comentariosTop.forEach(com => {
-                const card = criarElementoComentario(com);
-                const respostas = comentarios.filter(resp => resp.parent_id === com.id);
+            function criarThreadComentario(comentario, nivel = 0) {
+                const card = criarElementoComentario(comentario);
+                if (nivel > 0) {
+                    card.style.marginLeft = '24px';
+                    card.style.borderLeft = '2px solid rgba(20, 184, 166, 0.25)';
+                    card.style.paddingLeft = '12px';
+                }
+
+                const respostas = comentarios.filter(resp => resp.parent_id === comentario.id);
                 if (respostas.length > 0) {
                     const containerRespostas = document.createElement('div');
-                    containerRespostas.style.cssText = 'margin-left: 24px; border-left: 2px solid rgba(20, 184, 166, 0.25); padding-left: 12px; display: flex; flex-direction: column; gap: 8px;';
+                    containerRespostas.style.cssText = 'display: flex; flex-direction: column; gap: 8px; margin-top: 10px;';
                     respostas.forEach(resp => {
-                        containerRespostas.appendChild(criarElementoComentario(resp));
+                        containerRespostas.appendChild(criarThreadComentario(resp, nivel + 1));
                     });
                     card.appendChild(containerRespostas);
                 }
-                container.appendChild(card);
+
+                return card;
+            }
+
+            comentariosTop.forEach(com => {
+                container.appendChild(criarThreadComentario(com));
             });
 
             return container;
         }
 
         async function atualizarInterface() {
+            if (temRespostaAberta()) {
+                return;
+            }
+
             const comentarios = await buscarComentarios();
             if (!Array.isArray(comentarios)) {
                 return;
@@ -240,9 +279,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function conectarWebSocket() {
             try {
-                const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-                const host = location.hostname || 'localhost';
-                const wsUrl = `${protocol}://${host}:8000/ws/comments`;
+                const apiUrl = new URL(BACKEND_URL, location.href);
+                apiUrl.protocol = apiUrl.protocol === 'https:' ? 'wss:' : 'ws:';
+                apiUrl.pathname = '/ws/comments';
+                apiUrl.search = '';
+                apiUrl.hash = '';
+                const wsUrl = apiUrl.toString();
                 const ws = new WebSocket(wsUrl);
 
                 ws.addEventListener('message', () => atualizarInterface());

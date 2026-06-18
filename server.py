@@ -1,9 +1,12 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import sqlite3
 import time
 import json
+from pathlib import Path
 
 DB_PATH = 'comments.db'
 
@@ -39,6 +42,11 @@ conn.commit()
 
 app = FastAPI()
 
+BASE_DIR = Path(__file__).resolve().parent
+
+app.mount('/css', StaticFiles(directory=BASE_DIR / 'css'), name='css')
+app.mount('/video-background', StaticFiles(directory=BASE_DIR / 'video-background'), name='video-background')
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -48,12 +56,43 @@ app.add_middleware(
 )
 
 
+@app.get('/')
+def root():
+    return FileResponse(BASE_DIR / 'index.html')
+
+
+@app.get('/index.html')
+def index_page():
+    return FileResponse(BASE_DIR / 'index.html')
+
+
+@app.get('/diretrizes.html')
+def diretrizes_page():
+    return FileResponse(BASE_DIR / 'diretrizes.html')
+
+
+@app.get('/acoes.html')
+def acoes_page():
+    return FileResponse(BASE_DIR / 'acoes.html')
+
+
+@app.get('/script.js')
+def script_js():
+    return FileResponse(BASE_DIR / 'script.js')
+
+
+@app.get('/api-config.js')
+def api_config_js():
+    return FileResponse(BASE_DIR / 'api-config.js')
+
+
 class ComentarioIn(BaseModel):
     id: str | None = None
     nome: str
     texto: str
     autorToken: str
     parentId: str | None = None
+    parent_id: str | None = None
 
 
 class ReactionIn(BaseModel):
@@ -105,10 +144,11 @@ def get_comments():
 def post_comment(c: ComentarioIn):
     nid = c.id or f"id_{int(time.time()*1000)}"
     now = int(time.time())
+    parent_value = c.parentId or c.parent_id
     try:
         conn.execute(
             'INSERT INTO comentarios (id,nome,texto,autorToken,parent_id,created_at) VALUES (?,?,?,?,?,?)',
-            (nid, c.nome, c.texto, c.autorToken, c.parentId, now)
+            (nid, c.nome, c.texto, c.autorToken, parent_value, now)
         )
         conn.commit()
     except sqlite3.IntegrityError:
