@@ -24,11 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const listaComentarios = document.getElementById('lista-comentarios');
 
     if (formDiretriz && listaComentarios) {
-        const apiConfigurada = String(window.PONTO_ECO_API_URL || '').trim().replace(/\/$/, '');
-        const emPaginaPublicada = location.protocol.startsWith('http');
-        const BACKEND_URL = apiConfigurada || (location.hostname.includes('github.io')
-            ? ''
-            : (emPaginaPublicada ? location.origin : 'http://localhost:8000'));
+        const BACKEND_URL = String(window.PONTO_ECO_API_URL || (location.protocol.startsWith('http')
+            ? location.origin
+            : 'http://localhost:8000')).replace(/\/$/, '');
 
         const CHAVE_USUARIO = 'ponto_eco_token_voter';
 
@@ -64,20 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return respostasAbertas.size > 0;
         }
 
-        function apiDisponivel() {
-            return Boolean(BACKEND_URL);
-        }
-
-        function mensagemApiIndisponivel() {
-            return 'Comentários indisponíveis neste link. Configure uma API pública em api-config.js para publicar comentários entre aparelhos.';
-        }
-
         async function buscarComentarios() {
-            if (!apiDisponivel()) {
-                console.warn(mensagemApiIndisponivel());
-                return [];
-            }
-
             try {
                 const resp = await fetch(`${BACKEND_URL}/comments`);
                 if (!resp.ok) throw new Error('Falha ao buscar comentários');
@@ -264,11 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         async function reagirComentario(id, tipo) {
-            if (!apiDisponivel()) {
-                alert(mensagemApiIndisponivel());
-                return;
-            }
-
             try {
                 const resp = await fetch(`${BACKEND_URL}/comments/${encodeURIComponent(id)}/reactions`, {
                     method: 'POST',
@@ -284,11 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         async function deletarComentario(id) {
-            if (!apiDisponivel()) {
-                alert(mensagemApiIndisponivel());
-                return;
-            }
-
             try {
                 const resp = await fetch(`${BACKEND_URL}/comments/${encodeURIComponent(id)}?token=${encodeURIComponent(tokenUsuario)}`, {
                     method: 'DELETE'
@@ -303,10 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function conectarWebSocket() {
-            if (!apiDisponivel()) {
-                return;
-            }
-
             try {
                 const apiUrl = new URL(BACKEND_URL, location.href);
                 apiUrl.protocol = apiUrl.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -329,11 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         formDiretriz.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!apiDisponivel()) {
-                alert(mensagemApiIndisponivel());
-                return;
-            }
-
             const nome = document.getElementById('nome-colaborador').value.trim();
             const texto = document.getElementById('texto-diretriz').value.trim();
             if (!nome || !texto) return;
