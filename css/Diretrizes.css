@@ -50,12 +50,53 @@ body {
     padding: 0 10px;
 }
 
-/* 4. CABEÇALHO E MENU (Limpos) */
-header { 
-    position: relative; 
-    z-index: 1; 
-    text-align: center; 
-    padding: 120px 20px 60px; 
+/* 4. CABEÇALHO E MENU */
+header, .banner-verde {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 120px 20px 60px;
+    width: 100%;
+}
+
+.header-conteudo {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.titulo-principal {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    margin-bottom: 10px;
+}
+
+.fundo-subtitulo {
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 10px 20px;
+}
+
+.subtitulo-principal {
+    color: #e2e8f0;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.hero-menu {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    padding: 12px 0;
+    width: 100%;
 }
 
 .menu-visivel { 
@@ -66,6 +107,47 @@ header {
     gap: 15px; 
     margin-top: 20px; 
     width: 100%;
+}
+
+.conteudo-principal {
+    position: relative;
+    z-index: 1;
+    padding: 20px 20px 60px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.introducao-secao {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.mosaico-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.card-acao-moderno {
+    flex: 1 1 220px;
+    max-width: 260px;
+}
+
+.icone-wrapper {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.creditos-desenvolvedor {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin-top: 8px;
 }
 
 .menu-item { 
