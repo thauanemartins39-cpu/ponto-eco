@@ -1,1 +1,1 @@
-window.PONTO_ECO_API_URL = window.PONTO_ECO_API_URL || location.origin;
+window.PONTO_ECO_API_URL = window.PONTO_ECO_API_URL || '';
