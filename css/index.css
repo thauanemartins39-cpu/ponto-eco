@@ -127,7 +127,17 @@ header {
     transform: translateY(-1px);
 }
 
-.fundo-subtitulo { display: block; padding: 0; max-width: 760px; margin: 0 auto; color: rgba(255,255,255,0.92); }
+.fundo-subtitulo {
+    display: block;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 12px;
+    color: rgba(255,255,255,0.92);
+}
 .fundo-subtitulo p { margin: 0; font-size: 1rem; line-height: 1.7; }
 
 .emoji-grande { font-size: 5.5rem; margin-bottom: 18px; animation: flutuar 3s ease-in-out infinite; }
@@ -227,6 +237,27 @@ section > p, .container, .container-detalhes, .container-objetivo, .container-ca
     box-shadow: none;
 }
 .container-campanha > p:last-child { margin-bottom: 0; }
+
+.container > h2,
+.container-detalhes > h3,
+.container-campanha > h2,
+.container-objetivo > h3,
+.container-acoes > h2,
+.section-beneficios > h3,
+.container-links > h2 {
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.container > p,
+.container-detalhes > p,
+.container-campanha > p,
+.container-objetivo > p,
+.container-acoes > ul,
+.section-beneficios {
+    margin-top: 12px;
+}
 
 /* ==========================================================================
    6. ORGANIZAÇÃO DAS AÇÕES EM BLOQUINHOS

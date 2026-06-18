@@ -189,9 +189,17 @@ header, .banner-verde {
 .titulo-secao { 
     font-size: 1.4rem !important; 
     color: #ffffff !important; 
-    margin-bottom: 15px !important; 
+    margin-bottom: 18px !important; 
     text-align: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
  }
+
+.secao-impacto .introducao-secao,
+.container-caixa > p,
+.secao-formulario .introducao-secao {
+    margin-top: 12px;
+}
 
 /* 6. FORMULÁRIO */
 input, textarea { 
